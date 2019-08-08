@@ -1,19 +1,5 @@
 # vkpoint_api
 
-Установка модуля
------------------------------------
-
------------------------------------
-```bash
-pip install vkpoint_api
-```
-или
-```bash
-python -m pip install vkpoint_api
-```
-
-
-
 **vkpoint** - это python модуль для работы с монетой VK Point (VK Point API wrapper)
 * [Сама библиотека](./vkpoint) (python3)
 
@@ -169,6 +155,16 @@ Longpoll
 merchant.longpoll(timeout = 2)
 ```
 ***timeout*** — На сколько засыпает ваш сервер longpoll (Необязательный параметр)
+
+Установка модуля
+=====================
+```bash
+pip install vkpoint_api
+```
+или
+```bash
+python -m pip install vkpoint_api
+```
 
 Связь:
 -----------------------------------
