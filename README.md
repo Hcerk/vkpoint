@@ -4,7 +4,7 @@
 * [Сама библиотека](./vkpoint) (python3)
 
 ```python
-from vkpoint import *
+from vkpoint_api import *
 
 merchant = VKPoint(user_id = Ваш ID, token = 'TOKEN')
 ```
