@@ -2,11 +2,16 @@
 
 Установка модуля
 -----------------------------------
+
+-----------------------------------
+```bash
 pip install vkpoint_api
-
+```
 или
-
+```bash
 python -m pip install vkpoint_api
+```
+
 
 
 **vkpoint** - это python модуль для работы с монетой VK Point (VK Point API wrapper)
