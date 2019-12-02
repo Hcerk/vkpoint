@@ -10,31 +10,31 @@ from setuptools import setup
 """
 
 
-version='1.2'
+version = '2.0.5'
 
 with open('README.md', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='vkpoint',
-    version=version,
+    name = 'vkpoint_api',
+    version = version,
 
-    author='Hcerk',
+    author = 'Hcerk',
 
     description=(
-        u'**vkpoint** - это python модуль для работы с монетой VK Point (VK Point API wrapper)'
+        u'vkpoint - это python модуль для работы с монетой VK Point (VK Point API wrapper)'
     ),
     
-    long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description=  long_description,
+    long_description_content_type = 'text/markdown',
 
-    url='https://github.com/Hcerk/vkpoint',
-    download_url=f'https://github.com/Hcerk/vkpoint/archive/v{version}.zip',
+    url = 'https://github.com/Hcerk/vkpoint',
+    download_url = f'https://github.com/Hcerk/vkpoint/archive/v{version}.zip',
 
-    license='Apache License, Version 2.0, see LICENSE file',
+    license = 'Apache License, Version 2.0, see LICENSE file',
 
-    packages=['vkpoint'],
-    install_requires=['requests'],
+    packages = ['vkpoint_api'],
+    install_requires = ['requests', 'six'],
 
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
@@ -42,6 +42,7 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Programming Language :: Python :: Implementation :: CPython',
     ]
