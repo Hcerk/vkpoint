@@ -1,106 +1,110 @@
-import requests
-import json
+import requests, six, time
 
-from time import sleep
+class VKPoint(object):
 
-class VKPoint:
+    __slots__ = ('__user_id', '__token', '__ApiUrl', '__AppUrl', '__UserAgent')
+
     def __init__(self, user_id, token):
-        self.link = 'https://vkpoint.vposter.ru/api/method/'
-        self.user_id = user_id
-        self.token = token
-        self.user_agent = {
+        self.__user_id = user_id
+        self.__token = token
+        self.__ApiUrl = 'https://vkpoint.vposter.ru/api/method/'
+        self.__AppUrl = 'https://vk.com/app6748650'
+        self.__UserAgent = {
             "Accept-language": "en",
             "Cookie": "foo=bar",
-            "User-Agent": "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.102011-10-16 20:23:10"}
+            "User-Agent": "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.102011-10-16 20:23:10"
+            }
 
-    def _send_api_request(self, method, params = None, headers = None):
-        linker = self.link + method
-        response = requests.get(linker, params = params, headers = headers).json()
+    def _SendRequestss(self, method, params = None):
+        response = requests.get(self.__ApiUrl + method, params = params, headers = self.__UserAgent).json()
         if 'error' in response:
             return Exception(response)
         return response['response']
 
-    def setCallback(self, url): 
-        data = {'user_id': self.user_id, 'callback_url': url, 'access_token': self.token}
-        return self._send_api_request(method = 'account.MerchantSend?', params = data)
+    def MerchantGet(self, user_id):
+        params = {
+            'user_id_to': self.__user_id,
+            'user_id': user_id
+        }
+        return self._SendRequestss('account.MerchantGet', params = params)
 
-    def getUrl(self, point = None, fixed = False):
-        url = f"https://vk.com/app6748650#u={self.user_id}"
-        if point:
-            url += f"&point={point}"
-        if fixed:
-            url += "&fixed"
-        return url
+    def getPoint(self, user_id = None):
+        user_id = user_id or self.__user_id
+        params = {
+            'user_id': user_id,
+            'access_token': self.__token
+        }
+        return self._SendRequestss('account.getPoint', params = params)
 
-    def send_payment(self, to_id, amount):
-        data = {'user_id_to': self.user_id, 'user_id': to_id, 'point': amount, 'access_token': self.token}
-        return self._send_api_request(method = 'account.MerchantSend?', params = data)
+    def merchantSend(self, user_id, point): 
+        params = {
+            'user_id_to': self.__user_id,
+            'user_id': user_id,
+            'point': point,
+            'access_token': self.__token
+        }
+        return self._SendRequestss('account.MerchantSend', params = params)
 
-    def get_history(self, user_id):
-        data = {'user_id': user_id}
-        return self._send_api_request(method = 'users.HistoryTransactions?', params = data, headers = self.user_agent)
+    def HistoryTransactions(self, user_id = None):
+        params = {
+            'user_id': user_id or self.__user_id
+        }
+        return self._SendRequestss('users.HistoryTransactions', params = params)
 
-    def get_point(self, user_id = None):
-        user_id = user_id or self.user_id
-        data = {'user_id': user_id}
-        return self._send_api_request(method = 'account.getPoint?', params = data, headers = self.user_agent)
+    def GetApi(self):
+        return VKPointApiMethod(self, self.__token, self.__user_id)
 
-    def get_top(self, count):
-        data = {'count': count}
-        return self._send_api_request(method = 'users.getTop?', params = data, headers = self.user_agent)
+class VKPointApiMethod(object):
 
-    def get_top_vip(self, count):
-        data = {'count': count}
-        return self._send_api_request(method = 'users.getTopVip?', params = data, headers = self.user_agent)
+    __slots__ = ('_api', '_method', '__token', '__user_id')
 
-    def get_top_groups(self, count):
-        data = {'count': count}
-        return self._send_api_request(method = 'groups.getTop?', params = data, headers = self.user_agent)
+    def __init__(self, vkPointObj, token, user_id, method = None):
+        self._api = vkPointObj
+        self._method = method
+        self.__token = token
+        self.__user_id = user_id
 
-    def get_info_groups(self, group_id):
-        data = {'group_id': group_id}
-        return self._send_api_request(method = 'groups.Info?', params = data, headers = self.user_agent)
+    def __getattr__(self, method):
+        if '_' in method:
+            m = method.split('_')
+            method = m[0] + ''.join(i.title() for i in m[1:])
 
-    def get_point_ids(self, user_ids):
-        data = {'user_ids': user_ids}
-        return self._send_api_request(method = 'users.getTopIds?', params = data, headers = self.user_agent)
+        return VKPointApiMethod(
+            self._api,
+            self.__token,
+            self.__user_id,
+            (self._method + '.' if self._method else '') + method
+        )
 
-    def get_games_get_byid(self):
-        return self._send_api_request(method = 'games.getByld', headers = self.user_agent)
+    def __call__(self, **kwargs):
+        for k, v in six.iteritems(kwargs):
+            if isinstance(v, (list, tuple)):
+                kwargs[k] = ','.join(str(x) for x in v)
 
-    def get_search(self, search, count):
-        data = {'search': search, 'count': count}
-        return self._send_api_request(method = 'users.search?', params = data, headers = self.user_agent)
+        kwargs.update({
+            'user_id_to': self.__user_id,
+            'user_id': kwargs['user_id'] if 'user_id' in kwargs else self.__user_id,
+            'access_token': self.__token
+        })
 
-    def get_app_notif(self,count):
-        data = {'count': count}
-        return self._send_api_request(method = 'app.notif?', params = data, headers = self.user_agent)
+        return self._api._SendRequestss(method = self._method, params = kwargs)
 
-    def get_stock(self, count):
-        data = {'count': count}
-        return self._send_api_request(method = 'get.Stock?', params = data, headers = self.user_agent)
+class VKPointPool(object):
 
-    def get_ex_top(self, count):
-        data = {'count': count}
-        return self._send_api_request(method = 'ex.getTop?', params = data, headers = self.user_agent)
+    __slots__ = ('__api', '__LastTransactions')
 
-    def get_ex_search(self, search, count):
-        data = {'search': search, 'count': count}
-        return self._send_api_request(method = 'ex.search?', params = data, headers = self.user_agent)
+    def __init__(self, ApiObject):
+        self.__api = ApiObject
+        self.__LastTransactions = self.__api.HistoryTransactions()['items'][0]['id']
 
-    def merchant_get(self, user_id):
-        data = {'user_id': user_id, 'user_id_to': self.user_id}
-        request_data = self._send_api_request(method = 'account.MerchantGet?', params = data, headers = self.user_agent)
-        return request_data['count_trans_day']
-
-    def longpoll(self, timeout = 1):
-        last_transfer = self.get_history(self.user_id)['items'][0]['id']
+    def listen(self, sleep = 5):
         while True:
-            history = self.get_history(self.user_id)['items']
+            history = self.__api.HistoryTransactions()['items']
+            if history[0] != self.__LastTransactions:
+                for payment in history:
+                    if payment['id'] > self.__LastTransactions:
+                        yield payment
+                else:
+                    self.__LastTransactions = self.__api.HistoryTransactions()['items'][0]['id']
 
-            for payment in history:
-                if payment['id'] > last_transfer:
-                    yield payment
-                else: break
-                last_transfer = history[0]['id']
-            sleep(timeout)
+            time.sleep(sleep)
