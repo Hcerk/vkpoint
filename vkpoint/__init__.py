@@ -1,6 +1,6 @@
-from .vkpoint import *
+from .vkpoint_api import VKPoint, VKPointPool
 
 name = 'vkpoint'
 
 __author__ = 'Hcerk'
-__version__ = '1.0'
+__version__ = '2.0.5'
