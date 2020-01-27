@@ -10,7 +10,7 @@ from setuptools import setup
 """
 
 
-version = '2.0.5'
+version = '2.0.8'
 
 with open('README.md', encoding='utf-8') as f:
     long_description = f.read()
