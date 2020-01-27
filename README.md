@@ -1,4 +1,4 @@
-vkpoint_api (v 2.0.0)
+vkpoint_api (v 2.0.7)
 =================================================================================================================================================================================
 **vkpoint** - это python модуль для работы с монетой VK Point (VK Point API Wrapper)
 * [Сама библиотека](./vkpoint) (python3)
@@ -15,10 +15,11 @@ python -m pip install vkpoint_api
 ```python /* или python3 */
 from vkpoint import VKPoint
 
-VKPointSession = VKPoint(user_id = 123456789, token = '_tokentokentokentokentokentoken_')
+VKPointSession = VKPoint(user_id = 123456789, token = '_tokentokentokentokentokentoken_', hosting = 'https://site.org/')
 ```
 * `user_id` - Ваш ID от Социальной сети Вконтакте
 * `token` - Токен VKPoint (ключ получаем [здесь](https://vkpoint.vposter.ru/api/method/token))
+* `hosting` - Ссылка на хостинг, где установлен скрипт
 
 
 ### 4-ре основных метода в VKPoint Wrapper 
@@ -83,7 +84,8 @@ VKPointSession.getPoint(user_id = 151631142)
   "summTimeProces_count": "64", 
   "debug": "0", 
   "date_visit": 1575297129, 
-  "online": 0}
+  "online": 0
+}
 ```
 #### --> MerchantGet
 ***Выводит информацию о том, сколько отправлено поинтов пользователю (переводы). Этим методом можно подсчитать сколько осталось до лимита (1KК ботам)***

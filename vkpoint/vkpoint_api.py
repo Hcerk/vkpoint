@@ -4,7 +4,12 @@ class VKPoint(object):
 
     __slots__ = ('__user_id', '__token', '__ApiUrl', '__AppUrl', '__UserAgent')
 
-    def __init__(self, user_id, token):
+    def __init__(self, user_id, token, hosting):
+        ''' 
+        :param user_id: ID Вконтакте испольуемый для VKPoint
+        :param token: Токен VKPoint
+        :param hosting: http/https ссылка на хостинг, где установлен ваш сприпт
+        '''
         self.__user_id = user_id
         self.__token = token
         self.__ApiUrl = 'https://vkpoint.vposter.ru/api/method/'
@@ -13,7 +18,7 @@ class VKPoint(object):
             "Accept-language": "en",
             "Cookie": "foo=bar",
             "User-Agent": "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.102011-10-16 20:23:10",
-            "Referer": "https://vkpoint.vposter.ru/api/method/"
+            "Referer": hosting
             }
 
     def _SendRequestss(self, method, params = None):
